@@ -14,7 +14,7 @@ start:
 	int 21h
 
 ;инициализируем число
-	mov dx, 1
+	mov dx, 0
 	mov digit, dx
 
 ;ввод пользователя
@@ -40,12 +40,25 @@ input:
 	;иначе формируем число
 	mov ax, 10 ;множитель
 	mov dx, digit
+	add dx, bx ;добавляем к числу текущий символ
+	;умножаем на 10
 	mul dx
-	add ax, bx ;добавляем к числу текущий символ
 	mov digit, ax
 	jmp input
 
 after_input:
+;изюавляемся от лишнего умножения
+		mov dx, 0
+		mov ax, digit
+		mov bx, 10
+		div bx
+		;mov digit, ax ;digit - это наше число
+
+;арифметическая операция с числом (оно в ax)
+ 		mov bx, 2
+		mul bx
+		mov digit, ax
+
 ;переход на след. строку, чтобы не затирался текст
 		mov dx, offset nextline
 		mov ah, 09h
@@ -56,6 +69,7 @@ after_input:
 		mov ax, digit
 		mov bx, 10 ;на что делить
 		mov cx, 0 ;для разворота стека
+
 	to_stack:
 		mov dx, 0 ;очищаем dx, там будет остаток
 		div bx
