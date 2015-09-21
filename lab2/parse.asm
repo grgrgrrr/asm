@@ -25,19 +25,24 @@ input:
 	;запоминаем символ
 	mov symbol, al
 
-	;формируем число
-	mov al, 10
-	mul digit
-	mov dx, digit
-	mov bl, symbol
-	add dl, bl
-
 	;признак конца введенной строки
 	mov cl, 'q'
 	;сравниваем введенный символ с признаком конца
 	mov bl, symbol
 	cmp bl, cl
 	je after_input
+		
+	sub al, '0' ;отнимаем код нуля, чтобы получить число
+	mov bl, al ;число сейчас в bl
+	;cmp al, 9 ;если число больше 9, то завершаем программу
+	;ja end_pr
+	
+	;иначе формируем число
+	mov ax, 10 ;множитель
+	mov dx, digit
+	mul dx
+	add ax, bx ;добавляем к числу текущий символ
+	mov digit, ax
 	jmp input
 
 after_input:
@@ -46,9 +51,9 @@ after_input:
 		mov ah, 09h
 		int 21h
 
-
 	;вывод числа
-		mov ax, testd
+		mov al, 0
+		mov ax, digit
 		mov bx, 10 ;на что делить
 		mov cx, 0 ;для разворота стека
 	to_stack:
@@ -68,13 +73,14 @@ after_input:
 		loop print_from_stack
 
 ;завершение программы
+end_pr:
 		mov	ax, 4C00h
 		int	21h
 cseg ends
 
 ;сегмент данных
 dseg segment byte
-	question db 'Enter a digit, please: $'
+	question db 'Enter a digit, please (q - the end of digit): $'
 	nextline db 0Dh, 0Ah, '$'
 	symbol db ?
 	digit dw ?
