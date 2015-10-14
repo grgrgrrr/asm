@@ -54,7 +54,7 @@ cseg ends
 
 ;сегмент данных
 dseg segment byte
-	q db 'Enter your neme, please: $'
+	q db 'Enter your name, please: $'
 	j db 0Dh, 0Ah, '$'
 	hello db 'Hello, $'
 	buf db 20, 20 dup(?)
